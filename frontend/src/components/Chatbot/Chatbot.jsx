@@ -43,10 +43,13 @@ const Chatbot = () => {
         text: msg.text,
       }));
 
-      const response = await axios.post("http://localhost:3000/api/chat", {
-        message: userMsg,
-        history: historyMsg,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/chat`,
+        {
+          message: userMsg,
+          history: historyMsg,
+        },
+      );
 
       setMessages([
         ...newMessages,
