@@ -12,12 +12,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
-import { AIChatbot } from "../dashboard/AIChatbot";
 import { useAuth } from "../../../context/AuthContext";
 
 export function UserLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [chatbotOpen, setChatbotOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
   const { user, logout } = useAuth(); // Globally grab User Data
@@ -215,17 +213,6 @@ export function UserLayout() {
           </div>
         </footer>
       </div>
-
-      {/* AI Chatbot Button - Floating */}
-      <button
-        onClick={() => setChatbotOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all flex items-center justify-center z-50 hover:scale-110"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </button>
-
-      {/* AI Chatbot Modal */}
-      {chatbotOpen && <AIChatbot onClose={() => setChatbotOpen(false)} />}
     </div>
   );
 }

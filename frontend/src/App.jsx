@@ -20,6 +20,7 @@ import HospitalLandingPage from "./components/HospitalPortal/public/HospitalLand
 import HospitalLayout from "./components/HospitalPortal/layout/HospitalLayout";
 import HospitalDashboard from "./components/HospitalPortal/dashboard/HospitalDashboard";
 import HospitalRecords from "./components/HospitalPortal/dashboard/HospitalRecords";
+import Chatbot from "./components/Chatbot/Chatbot";
 
 // Auth Guard Wrapper for User Portal
 const ProtectedUserRoute = ({ children }) => {
@@ -62,6 +63,7 @@ function App() {
         </Route>
         <Route path="*" element={<Navigate to="/user" replace />} />
       </Routes>
+      <Chatbot />
     </Router>
   );
 }

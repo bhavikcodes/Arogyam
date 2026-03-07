@@ -10,6 +10,7 @@ import symptomsRouter from "./src/routes/symptoms.routes.js";
 import hospitalsRouter from "./src/routes/hospitals.routes.js";
 import dashboardRouter from "./src/routes/dashboard.routes.js";
 import alertsRouter from "./src/routes/alerts.routes.js";
+import chatbotRouter from "./src/routes/chatbot.routes.js";
 
 // Use Google DNS to resolve MongoDB Atlas SRV records
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
@@ -37,6 +38,7 @@ app.use("/api/symptoms", symptomsRouter);
 app.use("/api/hospitals", hospitalsRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/alerts", alertsRouter);
+app.use("/api/chat", chatbotRouter);
 
 //------------------------ Start Server & Connect to DB ----------------------//
 const start = async () => {
