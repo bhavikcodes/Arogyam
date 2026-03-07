@@ -12,7 +12,12 @@ export function HealthRecords() {
   useEffect(() => {
     if (!user) return;
     axios
-      .get("http://localhost:3000/api/cases", { params: { userId: user._id } })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/cases`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: { userId: user._id },
+      })
       .then((res) => setCases(res.data.cases || []))
       .catch((err) => console.error("Failed to fetch:", err))
       .finally(() => setLoading(false));

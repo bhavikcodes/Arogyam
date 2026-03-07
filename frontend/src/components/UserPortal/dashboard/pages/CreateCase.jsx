@@ -19,7 +19,7 @@ export function CreateCase() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/symptoms")
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/symptoms`)
       .then((res) => setSymptomsList(res.data))
       .catch((err) => console.error("Failed to fetch symptoms:", err));
   }, []);
@@ -94,7 +94,10 @@ export function CreateCase() {
         location: locPayload,
         createdBy: user._id,
       };
-      const res = await axios.post("http://localhost:3000/api/cases", payload);
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cases`,
+        payload,
+      );
       if (res.status === 201) {
         setSuccess(true);
         setFormData({

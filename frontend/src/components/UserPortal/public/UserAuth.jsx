@@ -23,17 +23,20 @@ export default function UserAuth({ type, onSuccess, onSwitchType }) {
 
     try {
       if (type === "login") {
-        const res = await axios.post("http://localhost:3000/api/auth/login", {
-          phone: formData.phone,
-          password: formData.password,
-        });
+        const res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+          {
+            phone: formData.phone,
+            password: formData.password,
+          },
+        );
         if (res.status === 200) {
           login(res.data.user, res.data.token);
           onSuccess();
         }
       } else {
         const res = await axios.post(
-          "http://localhost:3000/api/auth/register",
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
           formData,
         );
         if (res.status === 201) {
