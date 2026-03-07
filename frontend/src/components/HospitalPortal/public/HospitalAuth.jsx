@@ -29,7 +29,7 @@ export default function HospitalAuth({ type, onSwitchType, onSuccess }) {
     try {
       if (type === "login") {
         const response = await fetch(
-          "http://localhost:3000/api/auth/hospitalLogin",
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/hospitalLogin`,
           {
             method: "POST",
             headers: {

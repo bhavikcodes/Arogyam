@@ -35,7 +35,7 @@ export default function HospitalDashboard() {
     const fetchCases = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/cases/byHospital",
+          `${import.meta.env.VITE_BACKEND_URL}/api/cases/byHospital`,
         );
         const data = await response.json();
 

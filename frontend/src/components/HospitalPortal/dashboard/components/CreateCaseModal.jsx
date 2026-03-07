@@ -8,7 +8,9 @@ export default function CreateCaseModal({ isOpen, onClose, hospitalId }) {
     if (!isOpen) return;
     const fetchSymptoms = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/symptoms");
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/symptoms`,
+        );
         if (res.ok) {
           const data = await res.json();
           setSymptomsList(data);
@@ -76,13 +78,16 @@ export default function CreateCaseModal({ isOpen, onClose, hospitalId }) {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/cases", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cases`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
 
       const data = await response.json();
 
