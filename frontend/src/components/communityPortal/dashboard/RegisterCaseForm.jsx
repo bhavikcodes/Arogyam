@@ -18,7 +18,9 @@ export default function RegisterCaseForm({ user, onAddCase }) {
   useEffect(() => {
     const fetchSymptoms = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/symptoms");
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/symptoms`,
+        );
         if (res.status === 200) {
           setSymptomsList(res.data);
         }
@@ -83,7 +85,10 @@ export default function RegisterCaseForm({ user, onAddCase }) {
         createdBy: user._id,
       };
 
-      const res = await axios.post("http://localhost:3000/api/cases", payload);
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cases`,
+        payload,
+      );
       if (res.status === 201) {
         onAddCase(); // Refresh cases using the parent handler
         setFormData({

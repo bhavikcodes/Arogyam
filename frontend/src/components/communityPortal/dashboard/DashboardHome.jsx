@@ -11,12 +11,15 @@ export default function DashboardHome() {
   const fetchCases = async () => {
     if (!user) return;
     try {
-      const res = await axios.get("http://localhost:3000/api/cases", {
-        headers: {
-          "Content-Type": "application/json",
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cases`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: { userId: user._id },
         },
-        params: { userId: user._id },
-      });
+      );
       if (res.status === 200) {
         setCases(res.data.cases || []);
       }
