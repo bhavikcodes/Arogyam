@@ -1,0 +1,8 @@
+-- Add Bhashini for Multilingual support
+-- Govt Schemes ko improve krna hai make it like this "https://www.myscheme.gov.in/search/category/Health%20%26%20Wellness". add category or filters etc.
+-- Add OTP facility in citizen registeration
+-- add YT links in Health Awareness
+-- make UI same as Abcs ankush's website ( if possible do at last)
+-- add gemini API for chatbot, with pre context engineering specifically for Arogyam.
+-- ADD FEAT - community worker may see the user's past cases by their phone no.
+-- ADD FEAT - add appointment system in User Portal for hospitals.
