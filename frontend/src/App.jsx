@@ -19,6 +19,7 @@ import { HealthVideos } from "./components/UserPortal/dashboard/pages/HealthVide
 import HospitalLandingPage from "./components/HospitalPortal/public/HospitalLandingPage";
 import HospitalLayout from "./components/HospitalPortal/layout/HospitalLayout";
 import HospitalDashboard from "./components/HospitalPortal/dashboard/HospitalDashboard";
+import HospitalRecords from "./components/HospitalPortal/dashboard/HospitalRecords";
 
 // Auth Guard Wrapper for User Portal
 const ProtectedUserRoute = ({ children }) => {
@@ -39,8 +40,7 @@ function App() {
         <Route path="/hospital" element={<HospitalLandingPage />} />
         <Route path="/hospital/dashboard" element={<HospitalLayout />}>
           <Route index element={<HospitalDashboard />} />
-          {/* Note: Case Records route to be added later */}
-          <Route path="records" element={<div>Records coming soon...</div>} />
+          <Route path="records" element={<HospitalRecords />} />
         </Route>
 
         <Route

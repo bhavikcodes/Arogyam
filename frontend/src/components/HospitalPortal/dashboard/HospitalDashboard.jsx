@@ -162,7 +162,7 @@ export default function HospitalDashboard() {
         </button>
 
         <button
-          onClick={() => navigate("/hospital/records")} // Placeholder link
+          onClick={() => navigate("/hospital/dashboard/records")}
           className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all text-left flex flex-col group"
         >
           <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -253,7 +253,7 @@ export default function HospitalDashboard() {
 
         <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 text-center">
           <button
-            onClick={() => navigate("/hospital/records")} // Placeholder link
+            onClick={() => navigate("/hospital/dashboard/records")}
             className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors"
           >
             View all past cases &rarr;
