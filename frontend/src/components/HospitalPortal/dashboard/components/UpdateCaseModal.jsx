@@ -1,14 +1,27 @@
 import React, { useState } from "react";
 import { X, Search } from "lucide-react";
 
-export default function UpdateCaseModal({ isOpen, onClose }) {
+export default function UpdateCaseModal({
+  isOpen,
+  onClose,
+  selectedCase = null,
+}) {
   if (!isOpen) return null;
 
   const [searchPhone, setSearchPhone] = useState("");
   const [formData, setFormData] = useState({
-    caseType: "suspected",
-    status: "active",
+    caseType: selectedCase?.caseType || "suspected",
+    status: selectedCase?.status || "active",
   });
+
+  React.useEffect(() => {
+    if (selectedCase) {
+      setFormData({
+        caseType: selectedCase.caseType || "suspected",
+        status: selectedCase.status || "active",
+      });
+    }
+  }, [selectedCase]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -34,7 +47,9 @@ export default function UpdateCaseModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <h2 className="text-xl font-bold text-slate-800">
-            Update Existing Case
+            {selectedCase
+              ? `Update Case: ${selectedCase.patientId?.name || selectedCase.caseId}`
+              : "Update Existing Case"}
           </h2>
           <button
             onClick={onClose}
@@ -46,34 +61,37 @@ export default function UpdateCaseModal({ isOpen, onClose }) {
 
         {/* Body */}
         <div className="p-6 overflow-y-auto space-y-6">
-          {/* Search Section */}
-          <form onSubmit={handleSearch} className="space-y-1.5">
-            <label className="text-sm font-semibold text-slate-700 ml-1">
-              Search Patient by Phone
-            </label>
-            <div className="flex gap-2">
-              <div className="relative flex-1 group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Search size={18} />
+          {/* Search Section - Hidden if case is already selected */}
+          {!selectedCase && (
+            <>
+              <form onSubmit={handleSearch} className="space-y-1.5">
+                <label className="text-sm font-semibold text-slate-700 ml-1">
+                  Search Patient by Phone
+                </label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1 group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-600 transition-colors">
+                      <Search size={18} />
+                    </div>
+                    <input
+                      type="text"
+                      value={searchPhone}
+                      onChange={(e) => setSearchPhone(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all"
+                      placeholder="Enter patient phone number"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="px-5 py-3 bg-indigo-50 text-indigo-700 font-semibold rounded-2xl hover:bg-indigo-100 transition-colors"
+                  >
+                    Find
+                  </button>
                 </div>
-                <input
-                  type="text"
-                  value={searchPhone}
-                  onChange={(e) => setSearchPhone(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all"
-                  placeholder="Enter patient phone number"
-                />
-              </div>
-              <button
-                type="submit"
-                className="px-5 py-3 bg-indigo-50 text-indigo-700 font-semibold rounded-2xl hover:bg-indigo-100 transition-colors"
-              >
-                Find
-              </button>
-            </div>
-          </form>
-
-          <div className="h-px bg-slate-100 w-full" />
+              </form>
+              <div className="h-px bg-slate-100 w-full" />
+            </>
+          )}
 
           {/* Update Details Form */}
           <form

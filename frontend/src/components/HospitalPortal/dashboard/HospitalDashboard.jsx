@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PlusCircle, Edit, FileText, MoreVertical } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CreateCaseModal from "./components/CreateCaseModal";
@@ -9,6 +9,20 @@ export default function HospitalDashboard() {
   const location = useLocation();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedCaseToUpdate, setSelectedCaseToUpdate] = useState(null);
+
+  const openUpdateModalForCase = (caseItem = null) => {
+    setSelectedCaseToUpdate(caseItem);
+    setIsUpdateModalOpen(true);
+  };
+
+  const closeUpdateModal = () => {
+    setSelectedCaseToUpdate(null);
+    setIsUpdateModalOpen(false);
+  };
+
+  const [recentCases, setRecentCases] = useState([]);
+  const [isLoadingCases, setIsLoadingCases] = useState(true);
 
   // Extract hospital info from navigation state
   const hospital = location.state?.hospital || {};
@@ -17,45 +31,40 @@ export default function HospitalDashboard() {
   const hospitalZone =
     hospital.address?.city || hospital.address?.district || "Unknown Zone";
 
-  // Mock recent cases
-  const recentCases = [
-    {
-      id: "C-1092",
-      name: "Rahul Sharma",
-      phone: "9876543210",
-      age: 34,
-      gender: "male",
-      status: "active",
-      type: "confirmed",
-    },
-    {
-      id: "C-1093",
-      name: "Anita Desai",
-      phone: "9876543211",
-      age: 28,
-      gender: "female",
-      status: "recovered",
-      type: "suspected",
-    },
-    {
-      id: "C-1094",
-      name: "Vikram Singh",
-      phone: "9876543212",
-      age: 45,
-      gender: "male",
-      status: "active",
-      type: "confirmed",
-    },
-    {
-      id: "C-1095",
-      name: "Meera Patel",
-      phone: "9876543213",
-      age: 52,
-      gender: "female",
-      status: "closed",
-      type: "confirmed",
-    },
-  ];
+  useEffect(() => {
+    const fetchCases = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/cases/byHospital",
+        );
+        const data = await response.json();
+
+        if (response.ok) {
+          // Sort cases to get latest 10 (assuming createdAt exists)
+          const sortedCases = (data.cases || []).sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+          );
+          setRecentCases(sortedCases.slice(0, 10));
+        } else {
+          console.error("Failed to fetch cases:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching cases:", error);
+      } finally {
+        setIsLoadingCases(false);
+      }
+    };
+
+    fetchCases();
+  }, []);
+
+  const calculateAge = (dobString) => {
+    if (!dobString) return "-";
+    const dob = new Date(dobString);
+    const ageDifMs = Date.now() - dob.getTime();
+    const ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -138,7 +147,7 @@ export default function HospitalDashboard() {
         </button>
 
         <button
-          onClick={() => setIsUpdateModalOpen(true)}
+          onClick={() => openUpdateModalForCase(null)}
           className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all text-left flex flex-col group"
         >
           <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -176,7 +185,6 @@ export default function HospitalDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
-                <th className="px-6 py-4 font-semibold">Patient ID</th>
                 <th className="px-6 py-4 font-semibold">Name</th>
                 <th className="px-6 py-4 font-semibold">Phone</th>
                 <th className="px-6 py-4 font-semibold">Age/Gender</th>
@@ -186,33 +194,59 @@ export default function HospitalDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {recentCases.map((c) => (
-                <tr
-                  key={c.id}
-                  className="hover:bg-slate-50/50 transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm font-medium text-slate-700">
-                    {c.id}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-bold text-slate-900">
-                    {c.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-500">
-                    {c.phone}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    {c.age} &bull;{" "}
-                    <span className="capitalize">{c.gender}</span>
-                  </td>
-                  <td className="px-6 py-4">{getTypeBadge(c.type)}</td>
-                  <td className="px-6 py-4">{getStatusBadge(c.status)}</td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-indigo-600 hover:text-indigo-800 font-semibold text-sm">
-                      Update
-                    </button>
+              {isLoadingCases ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-6 py-8 text-center text-slate-500"
+                  >
+                    Loading cases...
                   </td>
                 </tr>
-              ))}
+              ) : recentCases.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-6 py-8 text-center text-slate-500"
+                  >
+                    No cases found for this hospital.
+                  </td>
+                </tr>
+              ) : (
+                recentCases.map((c) => {
+                  const patient = c.patientId || {};
+                  const age = calculateAge(patient.dateOfBirth);
+                  return (
+                    <tr
+                      key={c._id || c.caseId}
+                      className="hover:bg-slate-50/50 transition-colors"
+                    >
+                      <td className="px-6 py-4 text-sm font-bold text-slate-900">
+                        {patient.name || "Unknown"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-500">
+                        {patient.phone || "Unknown"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">
+                        {age} &bull;{" "}
+                        <span className="capitalize">
+                          {patient.gender || "Unknown"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">{getTypeBadge(c.caseType)}</td>
+                      <td className="px-6 py-4">{getStatusBadge(c.status)}</td>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={() => openUpdateModalForCase(c)}
+                          className="text-indigo-600 hover:text-indigo-800 font-semibold text-sm"
+                        >
+                          Update
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -231,10 +265,12 @@ export default function HospitalDashboard() {
       <CreateCaseModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        hospitalId={hospital._id || hospital.id}
       />
       <UpdateCaseModal
         isOpen={isUpdateModalOpen}
-        onClose={() => setIsUpdateModalOpen(false)}
+        onClose={closeUpdateModal}
+        selectedCase={selectedCaseToUpdate}
       />
     </div>
   );
