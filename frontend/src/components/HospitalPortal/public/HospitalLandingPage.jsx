@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import HospitalAuth from "./HospitalAuth";
 import { Stethoscope, Building2, ClipboardList } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function HospitalLandingPage() {
   const [authType, setAuthType] = useState("login");
@@ -17,7 +18,19 @@ export default function HospitalLandingPage() {
             Arogyam <span className="text-blue-700">Hospital Portal</span>
           </span>
         </div>
-        <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+        <div className="hidden md:flex gap-6 items-center text-sm font-medium text-slate-600">
+          <Link
+            to="/user"
+            className="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-100 font-semibold"
+          >
+            Citizen Portal
+          </Link>
+          <Link
+            to="/community"
+            className="px-4 py-2 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition border border-indigo-100 font-semibold"
+          >
+            Community Portal
+          </Link>
           <a
             href="#"
             className="hover:text-blue-700"

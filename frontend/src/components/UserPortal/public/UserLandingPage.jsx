@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import UserAuth from "./UserAuth";
 import { HeartPulse, ShieldCheck, Activity } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function UserLandingPage() {
   const [authType, setAuthType] = useState("login"); // 'login' or 'register'
@@ -17,7 +18,19 @@ export default function UserLandingPage() {
             Arogyam <span className="text-blue-600">Citizen Portal</span>
           </span>
         </div>
-        <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+        <div className="hidden md:flex gap-6 items-center text-sm font-medium text-slate-600">
+          <Link
+            to="/hospital"
+            className="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-100 font-semibold"
+          >
+            Hospital Portal
+          </Link>
+          <Link
+            to="/community"
+            className="px-4 py-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition border border-green-100 font-semibold inline-flex items-center gap-2"
+          >
+            Community Portal
+          </Link>
           <a
             href="#"
             className="hover:text-blue-600"
