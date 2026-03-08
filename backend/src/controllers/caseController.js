@@ -1,5 +1,6 @@
 import { Case } from "../models/case.js";
 import { User } from "../models/user.js";
+import { Hospital } from "../models/hospital.js";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 
@@ -142,20 +143,31 @@ const getCases = async (req, res) => {
 const confirmCase = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.body;
-    const user = await User.findById(userId);
-    if (user.role !== "hospital") {
-      return res.status(403).json({ message: "Unauthorized" });
+    const { hospitalId, caseType, status } = req.body;
+
+    const hospital = await Hospital.findById(hospitalId);
+    if (!hospital) {
+      return res.status(403).json({ message: "Hospital not found" });
     }
+
     const caseData = await Case.findById(id);
     if (!caseData) {
       return res.status(404).json({ message: "Case not found" });
     }
-    caseData.caseType = "confirmed";
-    caseData.confirmedBy = userId;
+
+    // Update fields dynamically based on modal inputs
+    if (caseType) caseData.caseType = caseType;
+    if (status) caseData.status = status;
+
+    // Record who confirmed/updated it
+    caseData.confirmedBy = hospital._id;
+    caseData.confirmedByName = hospital.name;
     caseData.confirmedAt = Date.now();
+
     await caseData.save();
-    return res.status(200).json({ caseData });
+    return res
+      .status(200)
+      .json({ caseData, message: "Case updated successfully" });
   } catch (error) {
     console.log(error);
     return res

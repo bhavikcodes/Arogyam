@@ -31,30 +31,31 @@ export default function HospitalDashboard() {
   const hospitalZone =
     hospital.address?.city || hospital.address?.district || "Unknown Zone";
 
-  useEffect(() => {
-    const fetchCases = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/cases/byHospital`,
+  const fetchCases = async () => {
+    setIsLoadingCases(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cases/byHospital`,
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        // Sort cases to get latest 10 (assuming createdAt exists)
+        const sortedCases = (data.cases || []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
-        const data = await response.json();
-
-        if (response.ok) {
-          // Sort cases to get latest 10 (assuming createdAt exists)
-          const sortedCases = (data.cases || []).sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-          );
-          setRecentCases(sortedCases.slice(0, 10));
-        } else {
-          console.error("Failed to fetch cases:", data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching cases:", error);
-      } finally {
-        setIsLoadingCases(false);
+        setRecentCases(sortedCases.slice(0, 10));
+      } else {
+        console.error("Failed to fetch cases:", data.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching cases:", error);
+    } finally {
+      setIsLoadingCases(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCases();
   }, []);
 
@@ -271,6 +272,8 @@ export default function HospitalDashboard() {
         isOpen={isUpdateModalOpen}
         onClose={closeUpdateModal}
         selectedCase={selectedCaseToUpdate}
+        hospitalId={hospital._id || hospital.id}
+        onSuccess={fetchCases}
       />
     </div>
   );

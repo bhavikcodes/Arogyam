@@ -1,14 +1,20 @@
 import React, { useState } from "react";
 import { X, Search } from "lucide-react";
+import axios from "axios";
 
 export default function UpdateCaseModal({
   isOpen,
   onClose,
   selectedCase = null,
+  hospitalId,
+  onSuccess,
 }) {
   if (!isOpen) return null;
 
   const [searchPhone, setSearchPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
   const [formData, setFormData] = useState({
     caseType: selectedCase?.caseType || "suspected",
     status: selectedCase?.status || "active",
@@ -34,11 +40,45 @@ export default function UpdateCaseModal({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Update Case Data:", { phone: searchPhone, ...formData });
-    // Add API call later
-    onClose();
+    setErrorMsg("");
+
+    if (!selectedCase) {
+      setErrorMsg(
+        "Please select a case directly from the dashboard first. Phone search is coming soon.",
+      );
+      return;
+    }
+
+    if (!hospitalId) {
+      setErrorMsg("Hospital ID is missing. Please reload the dashboard.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const caseIdToUpdate = selectedCase._id || selectedCase.caseId;
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cases/${caseIdToUpdate}/confirm`,
+        {
+          hospitalId: hospitalId,
+          caseType: formData.caseType,
+          status: formData.status,
+        },
+      );
+
+      if (onSuccess) onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error updating case:", error);
+      setErrorMsg(
+        error.response?.data?.message ||
+          "Failed to update case. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -61,6 +101,11 @@ export default function UpdateCaseModal({
 
         {/* Body */}
         <div className="p-6 overflow-y-auto space-y-6">
+          {errorMsg && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-xl border border-red-100 text-sm font-medium">
+              {errorMsg}
+            </div>
+          )}
           {/* Search Section - Hidden if case is already selected */}
           {!selectedCase && (
             <>
@@ -188,9 +233,10 @@ export default function UpdateCaseModal({
           <button
             type="submit"
             form="update-case-form"
-            className="px-6 py-2.5 rounded-xl font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
+            disabled={isLoading}
+            className="px-6 py-2.5 rounded-xl font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Changes
+            {isLoading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>

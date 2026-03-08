@@ -51,6 +51,10 @@ const caseSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+    confirmedByName: {
+      type: String,
+      default: null,
+    },
     confirmedAt: {
       type: Date,
       default: null,
